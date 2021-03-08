@@ -7,6 +7,9 @@ func (s *Server) initializeRoutes() {
 	// HEALTH CHECK
 	s.Router.HandleFunc("/health-check", middlewares.SetMiddlewareJSON(s.HealthCheck)).Methods("GET")
 
+	// LOGIN
+	s.Router.HandleFunc("/login", middlewares.SetMiddlewareJSON(s.Login)).Methods("POST")
+
 	//USER
 	s.Router.HandleFunc("/users", middlewares.SetMiddlewareJSON((s.GetAllUser))).Methods("GET")
 	s.Router.HandleFunc("/users", middlewares.SetMiddlewareJSON(s.CreateUser)).Methods("POST")
