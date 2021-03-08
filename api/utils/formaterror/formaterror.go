@@ -1,4 +1,4 @@
-package formatError
+package formaterror
 
 import (
 	"errors"
