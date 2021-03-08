@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Post struct {
+type Article struct {
 	ID        uint64    `gorm:"primary_key;auto_increment" json:"id"`
 	Title     string    `gorm:"size:255;not null;unique" json:"title"`
 	Content   string    `gorm:"size:255;not null;" json:"content"`
@@ -19,7 +19,7 @@ type Post struct {
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
-func (p *Post) Prepare() {
+func (p *Article) Prepare() {
 	p.ID = 0
 	p.Title = html.EscapeString(strings.TrimSpace(p.Title))
 	p.Content = html.EscapeString(strings.TrimSpace(p.Content))
@@ -28,7 +28,7 @@ func (p *Post) Prepare() {
 	p.UpdatedAt = time.Now()
 }
 
-func (p *Post) Validate() error {
+func (p *Article) Validate() error {
 
 	if p.Title == "" {
 		return errors.New("Title is required")
@@ -44,74 +44,74 @@ func (p *Post) Validate() error {
 	return nil
 }
 
-func (p *Post) SavePost(db *gorm.DB) (*Post, error) {
+func (p *Article) SaveArticle(db *gorm.DB) (*Article, error) {
 	var err error
-	err = db.Debug().Model(&Post{}).Create(&p).Error
+	err = db.Debug().Model(&Article{}).Create(&p).Error
 	if err != nil {
-		return &Post{}, err
+		return &Article{}, err
 	}
 	if p.ID != 0 {
 		err = db.Debug().Model(&User{}).Where("id = ?", p.AuthorID).Take(&p.Author).Error
 		if err != nil {
-			return &Post{}, err
+			return &Article{}, err
 		}
 	}
 	return p, nil
 }
 
-func (p *Post) FindAllPosts(db *gorm.DB) (*[]Post, error) {
+func (p *Article) FindAllArticle(db *gorm.DB) (*[]Article, error) {
 	var err error
-	posts := []Post{}
-	err = db.Debug().Model(&Post{}).Limit(100).Find(&posts).Error
+	article := []Article{}
+	err = db.Debug().Model(&Article{}).Limit(100).Find(&article).Error
 	if err != nil {
-		return &[]Post{}, err
+		return &[]Article{}, err
 	}
-	if len(posts) > 0 {
-		for i, _ := range posts {
-			err := db.Debug().Model(&User{}).Where("id = ?", posts[i].AuthorID).Take(&posts[i].Author).Error
+	if len(article) > 0 {
+		for i, _ := range article {
+			err := db.Debug().Model(&User{}).Where("id = ?", article[i].AuthorID).Take(&article[i].Author).Error
 			if err != nil {
-				return &[]Post{}, err
+				return &[]Article{}, err
 			}
 		}
 	}
-	return &posts, nil
+	return &article, nil
 }
 
-func (p *Post) FindPostByID(db *gorm.DB, pid uint64) (*Post, error) {
+func (p *Article) FindArticleByID(db *gorm.DB, pid uint64) (*Article, error) {
 	var err error
-	err = db.Debug().Model(&Post{}).Where("id = ?", pid).Take(&p).Error
+	err = db.Debug().Model(&Article{}).Where("id = ?", pid).Take(&p).Error
 	if err != nil {
-		return &Post{}, err
+		return &Article{}, err
 	}
 	if p.ID != 0 {
 		err = db.Debug().Model(&User{}).Where("id = ?", p.AuthorID).Take(&p.Author).Error
 		if err != nil {
-			return &Post{}, err
+			return &Article{}, err
 		}
 	}
 	return p, nil
 }
 
-func (p *Post) UpdateAPost(db *gorm.DB) (*Post, error) {
+func (p *Article) UpdateArticle(db *gorm.DB) (*Article, error) {
 
 	var err error
 
-	err = db.Debug().Model(&Post{}).Where("id = ?", p.ID).Updates(Post{Title: p.Title, Content: p.Content, UpdatedAt: time.Now()}).Error
+	err = db.Debug().Model(&Article{}).Where("id = ?", p.ID).Updates(Article{Title: p.Title, Content: p.Content, UpdatedAt: time.Now()}).Error
 	if err != nil {
-		return &Post{}, err
+		return &Article{}, err
 	}
 	if p.ID != 0 {
 		err = db.Debug().Model(&User{}).Where("id = ?", p.AuthorID).Take(&p.Author).Error
 		if err != nil {
-			return &Post{}, err
+			return &Article{}, err
 		}
 	}
 	return p, nil
 }
 
-func (p *Post) DeleteAPost(db *gorm.DB, pid uint64, uid uint32) (int64, error) {
+func (p *Article) DeleteArticle(db *gorm.DB, pid uint64, uid uint32) (int64, error) {
 
-	db = db.Debug().Model(&Post{}).Where("id = ? and author_id = ?", pid, uid).Take(&Post{}).Delete(&Post{})
+	db = db.Debug().Model(&Article{}).Where("id = ? and author_id = ?", pid, uid).Take(&Article{}).Delete(&Article{})
 
 	if db.Error != nil {
 		if gorm.IsRecordNotFoundError(db.Error) {
