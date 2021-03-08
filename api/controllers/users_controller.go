@@ -83,7 +83,7 @@ func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, userItem)
 }
 
-func (server *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (server *Server) UpdatedUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	uid, err := strconv.ParseUint(vars["id"], 10, 12)
@@ -133,7 +133,7 @@ func (server *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, updateUser)
 }
 
-func (server *Server) DeleteUser(w http.ResponseWriter, r *http.Request) {
+func (server *Server) RemoveUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	user := models.User{}
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
