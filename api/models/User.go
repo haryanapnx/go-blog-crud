@@ -20,6 +20,11 @@ type User struct {
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
+type UserAuthor struct {
+	ID       uint32 `gorm:"primary_key:auto_increment" json:"id"`
+	Username string `gorm:"size:255;not null;unique" json:"username"`
+	Email    string `gorm:"size:100;not null;unique" json:"email"`
+}
 
 func Hash(password string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -146,10 +151,10 @@ func (u *User) UpdateUser(db *gorm.DB, uid uint32) (*User, error) {
 
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
-			"password":  u.Password,
-			"username":  u.Username,
-			"email":     u.Email,
-			"update_at": time.Now(),
+			"password":   u.Password,
+			"username":   u.Username,
+			"email":      u.Email,
+			"updated_at": time.Now(),
 		},
 	)
 

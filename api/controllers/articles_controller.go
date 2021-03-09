@@ -62,15 +62,15 @@ func (server *Server) CreateArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) GetAllArticle(w http.ResponseWriter, r *http.Request) {
-	user := models.User{}
-	users, err := user.FindAllUser(server.DB)
+	article := models.Article{}
+	articles, err := article.FindAllArticle(server.DB)
 
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, users)
+	responses.JSON(w, http.StatusOK, articles)
 }
 
 func (server *Server) GetArticle(w http.ResponseWriter, r *http.Request) {
