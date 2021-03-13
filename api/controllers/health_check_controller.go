@@ -7,5 +7,5 @@ import (
 )
 
 func (server *Server) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	responses.JSON(w, http.StatusOK, "Everything is ok: 200")
+	responses.JSON(w, http.StatusOK, "Everything is ok: 200", nil)
 }

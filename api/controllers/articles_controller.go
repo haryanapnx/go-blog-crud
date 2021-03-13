@@ -58,7 +58,7 @@ func (server *Server) CreateArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, articleCreated.ID))
-	responses.JSON(w, http.StatusCreated, articleCreated)
+	responses.JSON(w, http.StatusCreated, "Created", articleCreated)
 }
 
 func (server *Server) GetAllArticle(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +70,7 @@ func (server *Server) GetAllArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, articles)
+	responses.JSON(w, http.StatusOK, "success", articles)
 }
 
 func (server *Server) GetArticle(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +90,7 @@ func (server *Server) GetArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, articleItem)
+	responses.JSON(w, http.StatusOK, "success", articleItem)
 }
 
 func (server *Server) UpdateArticle(w http.ResponseWriter, r *http.Request) {
@@ -163,7 +163,7 @@ func (server *Server) UpdateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, articleUpdated)
+	responses.JSON(w, http.StatusOK, "Updated", articleUpdated)
 }
 
 func (server *Server) RemoveArticle(w http.ResponseWriter, r *http.Request) {
@@ -202,6 +202,6 @@ func (server *Server) RemoveArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Entity", fmt.Sprintf("%d", pid))
-	responses.JSON(w, http.StatusNoContent, "")
+	responses.JSON(w, http.StatusNoContent, "Removed", nil)
 
 }
