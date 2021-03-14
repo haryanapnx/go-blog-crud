@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"html"
 	"strings"
 	"time"
@@ -10,20 +11,20 @@ import (
 )
 
 type Article struct {
-	ID        uint64     `gorm:"primary_key;auto_increment" json:"id"`
-	Title     string     `gorm:"size:255;not null;unique" json:"title"`
-	Content   string     `gorm:"size:255;not null;" json:"content"`
-	Author    UserAuthor `json:"author"`
-	AuthorID  uint32     `gorm:"not null;" json:"author_id"`
-	CreatedAt time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	ID        uint64    `gorm:"primary_key;auto_increment" json:"id"`
+	Title     string    `gorm:"size:255;not null;unique" json:"title"`
+	Content   string    `gorm:"size:255;not null;" json:"content"`
+	Author    User      `json:"author"`
+	AuthorID  uint32    `gorm:"not null;" json:"author_id"`
+	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 func (p *Article) Prepare() {
 	p.ID = 0
 	p.Title = html.EscapeString(strings.TrimSpace(p.Title))
 	p.Content = html.EscapeString(strings.TrimSpace(p.Content))
-	p.Author = UserAuthor{}
+	p.Author = User{}
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
 }
@@ -44,19 +45,19 @@ func (p *Article) Validate() error {
 	return nil
 }
 
-func (p *Article) SaveArticle(db *gorm.DB) (*Article, error) {
+func (a *Article) SaveArticle(db *gorm.DB) (*Article, error) {
 	var err error
-	err = db.Debug().Model(&Article{}).Create(&p).Error
+	err = db.Debug().Model(&Article{}).Create(&a).Error
 	if err != nil {
 		return &Article{}, err
 	}
-	if p.ID != 0 {
-		err = db.Debug().Model(&User{}).Where("id = ?", p.AuthorID).Take(&p.Author).Error
+	if a.ID != 0 {
+		err = db.Debug().Model(&User{}).Where("id = ?", a.AuthorID).Take(&a.Author).Error
 		if err != nil {
 			return &Article{}, err
 		}
 	}
-	return p, nil
+	return a, nil
 }
 
 func (p *Article) FindAllArticle(db *gorm.DB) (*[]Article, error) {
@@ -66,9 +67,14 @@ func (p *Article) FindAllArticle(db *gorm.DB) (*[]Article, error) {
 	if err != nil {
 		return &[]Article{}, err
 	}
+
 	if len(article) > 0 {
 		for i, _ := range article {
-			err := db.Debug().Model(&User{}).Where("id = ?", article[i].AuthorID).Take(&article[i].Author).Error
+			err := db.Debug().Model(&User{}).Where(
+				"id = ?",
+				article[i].AuthorID,
+			).Take(&article[i].Author).Error
+
 			if err != nil {
 				return &[]Article{}, err
 			}
@@ -83,6 +89,7 @@ func (p *Article) FindArticleByID(db *gorm.DB, pid uint64) (*Article, error) {
 	if err != nil {
 		return &Article{}, err
 	}
+	fmt.Printf("sini")
 	if p.ID != 0 {
 		err = db.Debug().Model(&User{}).Where("id = ?", p.AuthorID).Take(&p.Author).Error
 		if err != nil {

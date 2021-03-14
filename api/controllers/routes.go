@@ -19,8 +19,8 @@ func (s *Server) initializeRoutes() {
 
 	// ARTICLE
 	s.Router.HandleFunc("/articles", middlewares.SetMiddlewareJSON(s.GetAllArticle)).Methods("GET")
-	s.Router.HandleFunc("/articles", middlewares.SetMiddlewareJSON(s.GetAllArticle)).Methods("POST")
-	s.Router.HandleFunc("/articles/{id}", middlewares.SetMiddlewareJSON(s.GetAllArticle)).Methods("GET")
-	s.Router.HandleFunc("/articles/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.GetAllArticle))).Methods("PUT")
-	s.Router.HandleFunc("/articles/{id}", middlewares.SetMiddlewareJSON(s.GetAllArticle)).Methods("DELETE")
+	s.Router.HandleFunc("/articles", middlewares.SetMiddlewareJSON(s.CreateArticle)).Methods("POST")
+	s.Router.HandleFunc("/articles/{id}", middlewares.SetMiddlewareJSON(s.GetArticle)).Methods("GET")
+	s.Router.HandleFunc("/articles/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateArticle))).Methods("PUT")
+	s.Router.HandleFunc("/articles/{id}", middlewares.SetMiddlewareJSON(s.RemoveArticle)).Methods("DELETE")
 }
